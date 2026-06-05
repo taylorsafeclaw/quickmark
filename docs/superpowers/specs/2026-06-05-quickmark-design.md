@@ -51,8 +51,17 @@ unorganized) and Obsidian (too minimal, too much manual setup).
     (`blocksToMarkdownLossy`) and its lossless native format is JSON blocks —
     incompatible with the "plain `.md` you own" goal.
 - **Excalidraw:** the `@excalidraw/excalidraw` React component, embedded as a custom block.
-- **Native polish:** vibrancy sidebar, hidden-inset titlebar (floating traffic lights),
-  native menu bar, SF Pro system font, macOS keyboard conventions.
+- **Design language: clean, native Apple "Liquid Glass" feel** — translucent, layered,
+  glassy surfaces; depth via blur and material rather than borders; restrained, airy,
+  monochrome-leaning palette with a single accent. Concretely:
+  - Transparent Tauri window + native macOS **vibrancy** behind content (via the
+    `window-vibrancy` crate — `sidebar` / `underWindowBackground` / newer materials).
+  - Glassy panels in the web layer via CSS `backdrop-filter: blur()` + translucent
+    fills, layered over the native vibrant backdrop.
+  - Hidden-inset titlebar (floating traffic lights), native menu bar, SF Pro system
+    font, macOS keyboard conventions, generous spacing.
+  - This look is set up in the **M1 scaffold** (transparent/vibrant window base) so
+    everything is built on the glass foundation, and refined in **M5 (native polish)**.
 - Target: ~native-feeling, small bundle (no bundled Chromium — uses system WebView),
   fast cold start.
 
@@ -184,3 +193,10 @@ GFM tables; **Excalidraw embed** (custom node).
   now, expensive to discover later.
 - **Native feel via WebView** — accepted gap; deliberate polish (vibrancy, titlebar,
   fonts, shortcuts) closes most of it for an app this minimal.
+- **"Liquid Glass" fidelity in a WebView** — the *exact* native SwiftUI Liquid Glass
+  material isn't directly exposed to web content. We get genuine native vibrancy behind
+  the window (`window-vibrancy`) and approximate the glass surfaces in CSS
+  (`backdrop-filter` + translucent layers). This reads as authentically Apple for an app
+  this minimal, but pixel-perfect parity with native Liquid Glass is not a goal; if it
+  ever becomes a hard requirement, that's the one thing that would argue for a native
+  SwiftUI shell — out of scope for now.
