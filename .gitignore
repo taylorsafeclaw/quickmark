@@ -1,0 +1,22 @@
+# Brainstorm companion (local only)
+.superpowers/
+
+# macOS
+.DS_Store
+
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Rust / Tauri
+target/
+src-tauri/target/
+
+# Logs / env
+*.log
+.env
+.env.*
+!.env.example
