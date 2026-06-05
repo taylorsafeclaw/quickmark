@@ -22,6 +22,11 @@ fn collect(root: &Path, dir: &Path, out: &mut Vec<String>) -> std::io::Result<()
     Ok(())
 }
 
+/// Read a note at `rel` (relative to `root`) as a UTF-8 string.
+pub fn read_note(root: &Path, rel: &str) -> std::io::Result<String> {
+    std::fs::read_to_string(root.join(rel))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -37,5 +42,13 @@ mod tests {
         fs::write(root.join("notes/ignore.txt"), "x").unwrap();
         let got = list_notes(root).unwrap();
         assert_eq!(got, vec!["notes/a.md".to_string(), "notes/b.md".to_string()]);
+    }
+
+    #[test]
+    fn reads_note_contents() {
+        let tmp = tempfile::tempdir().unwrap();
+        std::fs::create_dir_all(tmp.path().join("notes")).unwrap();
+        std::fs::write(tmp.path().join("notes/a.md"), "# Hello").unwrap();
+        assert_eq!(read_note(tmp.path(), "notes/a.md").unwrap(), "# Hello");
     }
 }
