@@ -1,51 +1,51 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+// src/App.tsx
+import { useEffect, useState } from "react";
+import { Navigator } from "./components/Navigator";
+import { Editor } from "./components/Editor";
+import { buildTree, type TreeNode } from "./lib/tree";
+import { useDebouncedSave } from "./hooks/useDebouncedSave";
+import { bootstrapVault, listNotes, readNote, writeNote } from "./lib/vault";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export default function App() {
+  const [tree, setTree] = useState<TreeNode[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [content, setContent] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  const save = useDebouncedSave((md) => {
+    if (selected) writeNote(selected, md);
+  }, 500);
+
+  async function refresh() {
+    setTree(buildTree(await listNotes()));
   }
 
+  useEffect(() => {
+    (async () => { await bootstrapVault(); await refresh(); })();
+  }, []);
+
+  async function open(path: string) {
+    save.flush();
+    setSelected(path);
+    setContent(await readNote(path));
+  }
+
+  // save on window blur
+  useEffect(() => {
+    const onBlur = () => save.flush();
+    window.addEventListener("blur", onBlur);
+    return () => window.removeEventListener("blur", onBlur);
+  }, [save]);
+
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      <Navigator tree={tree} selected={selected} onSelect={open} />
+      <div className="editor-pane">
+        {selected ? (
+          <Editor noteKey={selected} value={content} onChange={(md) => { setContent(md); save(md); }} />
+        ) : (
+          <p style={{ padding: 40, opacity: 0.5 }}>Select a note</p>
+        )}
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    </div>
   );
 }
-
-export default App;
