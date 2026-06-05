@@ -27,6 +27,19 @@ pub fn read_note(root: &Path, rel: &str) -> std::io::Result<String> {
     std::fs::read_to_string(root.join(rel))
 }
 
+/// Atomically write `contents` to `rel` (relative to `root`):
+/// write to a temp file in the same dir, then rename over the target.
+pub fn write_note(root: &Path, rel: &str, contents: &str) -> std::io::Result<()> {
+    let target = root.join(rel);
+    if let Some(parent) = target.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    let tmp = target.with_extension("md.tmp");
+    std::fs::write(&tmp, contents)?;
+    std::fs::rename(&tmp, &target)?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -50,5 +63,20 @@ mod tests {
         std::fs::create_dir_all(tmp.path().join("notes")).unwrap();
         std::fs::write(tmp.path().join("notes/a.md"), "# Hello").unwrap();
         assert_eq!(read_note(tmp.path(), "notes/a.md").unwrap(), "# Hello");
+    }
+
+    #[test]
+    fn writes_note_atomically_and_no_tmp_left() {
+        let tmp = tempfile::tempdir().unwrap();
+        write_note(tmp.path(), "notes/new.md", "content").unwrap();
+        assert_eq!(read_note(tmp.path(), "notes/new.md").unwrap(), "content");
+        assert!(!tmp.path().join("notes/new.md.tmp").exists(), "temp file leaked");
+    }
+
+    #[test]
+    fn write_creates_missing_parent_dirs() {
+        let tmp = tempfile::tempdir().unwrap();
+        write_note(tmp.path(), "deep/nested/x.md", "ok").unwrap();
+        assert_eq!(read_note(tmp.path(), "deep/nested/x.md").unwrap(), "ok");
     }
 }
