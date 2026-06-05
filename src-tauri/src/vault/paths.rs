@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub const BUILTIN_DIRS: [&str; 5] = ["notes", "journal", "prompts", "prompts/_meta", "drawings"];
 
@@ -8,6 +8,15 @@ pub fn bootstrap(root: &Path) -> std::io::Result<()> {
         std::fs::create_dir_all(root.join(dir))?;
     }
     Ok(())
+}
+
+/// Default vault root: ~/quickmark (override with QUICKMARK_VAULT env for tests/dev).
+pub fn default_vault_root() -> PathBuf {
+    if let Ok(p) = std::env::var("QUICKMARK_VAULT") {
+        return PathBuf::from(p);
+    }
+    let home = std::env::var("HOME").expect("HOME not set");
+    PathBuf::from(home).join("quickmark")
 }
 
 #[cfg(test)]

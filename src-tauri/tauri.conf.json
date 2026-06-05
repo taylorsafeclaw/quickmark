@@ -14,7 +14,9 @@
       {
         "title": "quickmark",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "transparent": true,
+        "titleBarStyle": "Overlay"
       }
     ],
     "security": {
