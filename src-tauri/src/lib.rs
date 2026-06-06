@@ -11,7 +11,7 @@ pub fn run() {
         .setup(|app| {
             let win = app.get_webview_window("main").unwrap();
             #[cfg(target_os = "macos")]
-            apply_vibrancy(&win, NSVisualEffectMaterial::Sidebar, None, None)
+            apply_vibrancy(&win, NSVisualEffectMaterial::HudWindow, None, None)
                 .expect("vibrancy failed");
             Ok(())
         })

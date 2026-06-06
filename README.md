@@ -24,8 +24,26 @@ Excalidraw.
 
 ## Status
 
-Early development. See the design spec in
-[`docs/superpowers/specs/`](docs/superpowers/specs/) for the full plan.
+Early development — **M1 (foundation walking skeleton) is in place**: pick a vault, see
+your `.md` files in a tree, edit one in a Milkdown WYSIWYG editor, and have changes
+autosave to disk, on a translucent native window. Excalidraw embeds, search, the command
+palette, prompts/meta-prompts, and node-whitelist polish come in M2–M5.
+
+The design spec and the dated milestone plans/spikes in [`docs/`](docs/) are point-in-time
+records of the original plan — this README is the single living source of current status.
+
+## Development
+
+Requires [Rust](https://rustup.rs) + [Node](https://nodejs.org) (macOS).
+
+```bash
+npm install
+npm run tauri dev          # run the app
+npm test                   # frontend tests (Vitest)
+cd src-tauri && cargo test # backend tests
+```
+
+The vault defaults to `~/quickmark` (override with the `QUICKMARK_VAULT` env var).
 
 ## License
 
