@@ -4,10 +4,10 @@ html, body, #root { margin: 0; height: 100%; background: transparent; color: #e6
 .app { display: grid; grid-template-columns: 260px 1fr; height: 100vh; }
 .navigator {
   padding: 38px 10px 10px; overflow: auto;
-  background: rgba(30,30,32,0.45); backdrop-filter: blur(30px) saturate(160%);
+  background: rgba(30,30,32,0.22); backdrop-filter: blur(30px) saturate(160%);
   border-right: 1px solid rgba(255,255,255,0.08);
 }
-.editor-pane { overflow: auto; background: rgba(20,20,22,0.35); backdrop-filter: blur(20px); }
+.editor-pane { overflow: auto; background: rgba(20,20,22,0.10); backdrop-filter: blur(20px); }
 .nav-file { padding: 4px 8px; border-radius: 6px; font-size: 13px; cursor: default; color: #c8c8cd; }
 .nav-file:hover { background: rgba(255,255,255,0.06); }
 .nav-file.sel { background: rgba(59,111,224,0.85); color: #fff; }
